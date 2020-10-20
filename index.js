@@ -5,6 +5,7 @@ const homeRoutes = require('./routes/home');
 const addRoutes = require('./routes/add');
 const coursesRoutes = require('./routes/courses');
 const cardRoutes = require('./routes/card');
+const mongoose  = require('mongoose')
 
 const app = express();
 
@@ -27,9 +28,23 @@ app.use('/add', addRoutes);
 app.use('/card', cardRoutes);
 
 
-
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT, () => {
-    console.log('Server has been started!');
-})
+async function start(){
+    try{
+        const urlDB = `mongodb+srv://maxim:maxim777@cluster0.5no97.mongodb.net/test?retryWrites=true&w=majority`
+        await mongoose.connect(urlDB, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        })
+        app.listen(PORT, () => {
+            console.log('Server has been started!');
+        })
+    }catch(e){
+        console.log(e);
+    }
+}
+start()
+
+
+
