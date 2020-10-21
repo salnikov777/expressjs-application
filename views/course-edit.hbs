@@ -17,5 +17,10 @@
         <span class="helper-text" data-error="Text an Image URL"></span>
     </div>
     <input type="hidden" name="id" value="{{course.id}}">
-    <button class="btn btn-primary">Edit the course</button>
+    <button type="submit" class="btn btn-primary">Edit the course</button>
+</form>
+
+<form class="course-form" action="/courses/remove" method="post">
+    <input type="hidden" name="id" value="{{course.id}}">
+    <button class="btn red">Remove the course</button>
 </form>
