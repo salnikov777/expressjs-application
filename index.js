@@ -11,6 +11,8 @@ const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-acce
 const User = require('./models/user');
 const orderRoutes = require('./routes/orders');
 const authRoutes = require('./routes/auth');
+const session = require('express-session');
+const varMiddleware = require('./middleware/variables');
 
 const app = express();
 
@@ -25,19 +27,18 @@ app.set('view engine', 'hbs')
 
 app.set('views', 'views')
 
-app.use(async (req, res, next) => {
 
-    try{
-        const user = await User.findById('5f903b4680d8b018988f8ebb')
-        req.user = user;
-        next();
-    }catch (e) {
-        console.log(e);
-    }
-})
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({extended: true}))
+app.use(session({
+    secret: 'some secret value',
+    resave: false,
+    saveUninitialized: false
+
+}))
+
+app.use(varMiddleware)
 
 app.use('/', homeRoutes);
 app.use('/courses', coursesRoutes);
@@ -57,16 +58,16 @@ async function start() {
             useUnifiedTopology: true,
             useFindAndModify: false
         })
-        const candidate = await User.findOne();
-
-        if (!candidate) {
-            const user = new User({
-                email: 'salnikov-m@yandex.ru',
-                name: 'Max',
-                cart: {items: []}
-            })
-            await user.save();
-        }
+        // const candidate = await User.findOne();
+        //
+        // if (!candidate) {
+        //     const user = new User({
+        //         email: 'salnikov-m@yandex.ru',
+        //         name: 'Max',
+        //         cart: {items: []}
+        //     })
+        //     await user.save();
+        // }
 
 
         app.listen(PORT, () => {

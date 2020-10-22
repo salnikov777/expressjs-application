@@ -8,14 +8,14 @@
         </div>
         <div id="login" class="col s6 offset-s3">
             <h1>Enter into shop</h1>
-            <form action="/add" method="post">
+            <form action="/auth/login" method="post">
                 <div class="input-field">
                     <input name="email" id="email" type="email" class="validate" required>
                     <label for="email">Email</label>
                     <span class="helper-text" data-error="Text an email"></span>
                 </div>
                 <div class="input-field">
-                    <input name="password" id="password" type="password" class="validate"  required>
+                    <input name="password" id="password" type="password" class="validate" required>
                     <label for="password">Password</label>
                     <span class="helper-text" data-error="Text a password"></span>
                 </div>
@@ -24,19 +24,19 @@
         </div>
         <div id="register" class="col s6 offset-s3">
             <h1>Registration</h1>
-            <form action="/add" method="post">
+            <form action="/auth/register" method="post">
                 <div class="input-field">
                     <input name="email" id="remail" type="email" class="validate" required>
                     <label for="remail">Email</label>
                     <span class="helper-text" data-error="Text an email"></span>
                 </div>
                 <div class="input-field">
-                    <input name="password" id="rpassword" type="password" class="validate"  required>
+                    <input name="password" id="rpassword" type="password" class="validate" required>
                     <label for="rpassword">Password</label>
                     <span class="helper-text" data-error="Text a password"></span>
                 </div>
                 <div class="input-field">
-                    <input name="confirm" id="confirm" type="password" class="validate"  required>
+                    <input name="confirm" id="confirm" type="password" class="validate" required>
                     <label for="confirm">Confirm password</label>
                     <span class="helper-text" data-error="Repeat a password"></span>
                 </div>
