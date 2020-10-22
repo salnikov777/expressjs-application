@@ -8,6 +8,21 @@ function toCurrency(){
 }
 toCurrency()
 
+
+function toDate(){
+    document.querySelectorAll('.date').forEach(date => {
+        date.textContent = new Intl.DateTimeFormat('ru-RU', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        }).format(new Date(date.textContent))
+    })
+}
+toDate()
+
 const $card = document.querySelector('#card')
 
 if ($card) {
