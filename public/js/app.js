@@ -1,4 +1,4 @@
-function toCurrency(){
+function toCurrency() {
     document.querySelectorAll('.price').forEach(node => {
         node.textContent = new Intl.NumberFormat('ru-RU', {
             currency: 'rub',
@@ -6,10 +6,11 @@ function toCurrency(){
         }).format(node.textContent)
     })
 }
+
 toCurrency()
 
 
-function toDate(){
+function toDate() {
     document.querySelectorAll('.date').forEach(date => {
         date.textContent = new Intl.DateTimeFormat('ru-RU', {
             day: '2-digit',
@@ -21,6 +22,7 @@ function toDate(){
         }).format(new Date(date.textContent))
     })
 }
+
 toDate()
 
 const $card = document.querySelector('#card')
@@ -28,8 +30,13 @@ const $card = document.querySelector('#card')
 if ($card) {
     $card.addEventListener('click', event => {
         if (event.target.classList.contains('js-remove')) {
+            const csrf = event.target.dataset.csrf
+
             fetch('/card/remove/' + event.target.dataset.id, {
-                method: 'delete'
+                method: 'delete',
+                headers: {
+                    'X-XSRF-TOKEN': csrf
+                }
             }).then(res => res.json())
                 .then((card) => {
                     if (card.courses.length) {
@@ -39,7 +46,12 @@ if ($card) {
                                            <td>${c.title}</td>
                                            <td>${c.count}</td>
                                            <td>
-                                             <button class="btn btn-small js-remove" data-id="${c.id}">Delete</button>
+                                             <button class="btn btn-small js-remove" 
+                                                data-id="${c.id}"
+                                                data-csrf="${csrf}"
+                                             >
+                                             Delete
+                                             </button>
                                            </td>
                                         </tr>
                         `
