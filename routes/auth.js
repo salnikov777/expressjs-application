@@ -8,6 +8,8 @@ const sendgrid = require('nodemailer-sendgrid-transport');
 const keys = require('../keys');
 const regEmail = require('../emails/registration');
 const resetEmail = require('../emails/reset');
+const {validationResult} = require('express-validator');
+const {registerValidators} = require('../utils/validators');
 
 const transporter = nodemailer.createTransport(sendgrid({
     auth: {
@@ -66,27 +68,27 @@ router.post('/login', async (req, res) => {
 
 })
 
-router.post('/register', async (req, res) => {
+router.post('/register', registerValidators, async (req, res) => {
     try {
-        const {email, password, repeat, name} = req.body;
+        const {email, password, name} = req.body;
 
-        const candidate = await User.findOne({email})
-
-
-        if (candidate) {
-            req.flash('registerError', 'user with that email already exists')
-            res.redirect('/auth/login#register')
-        } else {
-            const hashPassword = await bcrypt.hash(password, 10)
-            const user = new User({
-                email, name, password: hashPassword, card: {items: []}
-            })
-
-            await user.save();
-            await transporter.sendMail(regEmail(email))
-            res.redirect('/auth/login#login')
-
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            req.flash('registerError', errors.array()[0].msg)
+            return res.status(422).redirect('/auth/login#register')
         }
+
+
+        const hashPassword = await bcrypt.hash(password, 10)
+        const user = new User({
+            email, name, password: hashPassword, card: {items: []}
+        })
+
+        await user.save();
+        await transporter.sendMail(regEmail(email))
+        res.redirect('/auth/login#login')
+
+
     } catch (e) {
         console.log(e);
     }
@@ -127,19 +129,19 @@ router.post('/reset', (req, res) => {
 })
 
 router.get('/password/:token', async (req, res) => {
-    if(!req.params.token){
+    if (!req.params.token) {
         return res.redirect('/auth/login')
     }
 
-    try{
+    try {
         const user = await User.findOne({
             resetToken: req.params.token,
             resetTokenExp: {$gt: Date.now()}
         })
 
-        if(!user){
-            return  res.redirect('/auth/login')
-        }else{
+        if (!user) {
+            return res.redirect('/auth/login')
+        } else {
             res.render('auth/password', {
                 title: 'Recover your access',
                 error: req.flash('error'),
@@ -147,7 +149,7 @@ router.get('/password/:token', async (req, res) => {
                 token: req.params.token
             })
         }
-    }catch (e) {
+    } catch (e) {
         console.log(e);
     }
 })
