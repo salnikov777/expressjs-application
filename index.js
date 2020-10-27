@@ -11,6 +11,7 @@ const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-acce
 const User = require('./models/user');
 const orderRoutes = require('./routes/orders');
 const authRoutes = require('./routes/auth');
+const profileRoutes = require('./routes/profile');
 const session = require('express-session');
 const MongoStore = require('connect-mongodb-session')(session);
 const varMiddleware = require('./middleware/variables');
@@ -18,6 +19,8 @@ const userMiddleware = require('./middleware/user');
 const csrf = require('csurf');
 const flash = require('connect-flash');
 const keys = require('./keys');
+const errorHandler = require('./middleware/error');
+const fileMiddleWare = require('./middleware/file');
 
 const app = express();
 
@@ -42,6 +45,7 @@ app.set('views', 'views')
 
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static( path.join(__dirname, 'images')));
 app.use(express.urlencoded({extended: true}))
 app.use(session({
     secret: keys.SESSION_SECRET,
@@ -50,6 +54,9 @@ app.use(session({
     store
 
 }))
+
+app.use(fileMiddleWare.single('avatar'))
+
 app.use(csrf())
 app.use(flash())
 
@@ -62,6 +69,9 @@ app.use('/add', addRoutes);
 app.use('/card', cardRoutes);
 app.use('/orders', orderRoutes);
 app.use('/auth', authRoutes);
+app.use('/profile', profileRoutes);
+
+app.use(errorHandler);
 
 
 const PORT = process.env.PORT || 3000
