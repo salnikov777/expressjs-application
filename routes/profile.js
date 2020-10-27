@@ -21,7 +21,6 @@ router.post('/', auth, async (req, res) => {
         if(req.file){
             toChange.avatarUrl = req.file.filename
         }
-        console.log(req.file)
 
         Object.assign(user, toChange)
         await user.save()
